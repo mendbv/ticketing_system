@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<!-- SEARCH BAR -->
+<div style="margin-bottom: 40px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2><i class="fa-solid fa-briefcase"></i> {% trans "Staff Workspace" %}</h2>
+    </div>
+
+    <form method="get" style="display: flex; gap: 10px;">
+        <input type="text" name="q" placeholder="{% trans 'Search by Ticket #, Name or Email...' %}" value="{{ search_query|default:'' }}" style="margin-bottom: 0;">
+        <button type="submit" class="btn" style="width: auto;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        {% if search_query %}
+            <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary" style="width: auto; text-decoration: none;">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- SECTION 1: PENDING (Requires Action) -->
+<h3 style="color: #f1c40f; border-bottom: 2px solid #f1c40f; padding-bottom: 10px; margin-top: 40px;">
+    <i class="fa-regular fa-clock"></i> {% trans "Pending Requests" %} ({{ pending_tickets.count }})
+</h3>
+
+{% if pending_tickets %}
+<div class="card-grid">
+    {% for ticket in pending_tickets %}
+        {% include "tickets/includes/staff_ticket_card.html" with ticket=ticket show_quick_action=True %}
+    {% endfor %}
+</div>
+{% else %}
+    <p style="color: #999; font-style: italic;">{% trans "No pending tickets." %}</p>
+{% endif %}
+
+
+<!-- SECTION 2: PROCESSING (In Progress) -->
+<h3 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 50px;">
+    <i class="fa-solid fa-spinner"></i> {% trans "In Processing" %} ({{ processing_tickets.count }})
+</h3>
+
+{% if processing_tickets %}
+<div class="card-grid">
+    {% for ticket in processing_tickets %}
+        {% include "tickets/includes/staff_ticket_card.html" with ticket=ticket %}
+    {% endfor %}
+</div>
+{% else %}
+    <p style="color: #999; font-style: italic;">{% trans "No tickets currently being processed." %}</p>
+{% endif %}
+
+
+<!-- SECTION 3: COMPLETED (Ready/Rejected) -->
+<h3 style="color: #7f8c8d; border-bottom: 2px solid #7f8c8d; padding-bottom: 10px; margin-top: 50px;">
+    <i class="fa-solid fa-box-archive"></i> {% trans "Completed / Archive" %} ({{ completed_tickets.count }})
+</h3>
+
+{% if completed_tickets %}
+<div class="card-grid">
+    {% for ticket in completed_tickets %}
+        {% include "tickets/includes/staff_ticket_card.html" with ticket=ticket %}
+    {% endfor %}
+</div>
+{% else %}
+    <p style="color: #999; font-style: italic;">{% trans "Archive is empty." %}</p>
+{% endif %}
+
+{% endblock %}

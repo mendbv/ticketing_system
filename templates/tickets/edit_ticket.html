@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="max-width: 700px; margin: auto;">
+    <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary" style="margin-bottom: 20px;">
+        <i class="fa-solid fa-arrow-left"></i> {% trans "Back to Staff Panel" %}
+    </a>
+
+    <div class="card">
+        <div class="status-strip st-{{ ticket.status }}"></div>
+        <h2>{% trans "Manage Ticket" %} #{{ ticket.ticket_number }}</h2>
+        <p><strong>{% trans "Client:" %}</strong> {{ ticket.client.get_full_name }}</p>
+        <p><strong>{% trans "User Note:" %}</strong> {{ ticket.user_note }}</p>
+        <hr>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn" style="width: 100%; justify-content: center; margin-top: 20px;">
+                <i class="fa-solid fa-floppy-disk"></i> {% trans "Update Ticket" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

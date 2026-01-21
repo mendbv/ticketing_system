@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; padding: 20px 0;">
+    
+    <div class="card" style="max-width: 500px; width: 100%; padding: 40px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="margin: 0;">{% trans "Create Account" %}</h2>
+            <p style="color: #7f8c8d;">{% trans "Join us to manage your documents easily." %}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div style="background: #fadbd8; color: #c0392b; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 0.85rem;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: #999; display: block; margin-top: -15px; margin-bottom: 15px; font-size: 0.8rem;">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div style="color: #e74c3c; font-size: 0.85rem; margin-top: -10px;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn" style="margin-top: 10px;">
+                {% trans "Register" %} <i class="fa-solid fa-user-plus"></i>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <p style="font-size: 0.9rem; color: #7f8c8d;">
+                {% trans "Already have an account?" %} 
+                <a href="{% url 'login' %}" style="color: var(--accent); text-decoration: none; font-weight: bold;">{% trans "Login" %}</a>
+            </p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="max-width: 600px; margin: auto;">
+    <div class="card">
+        <h2 style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-top: 0; color: var(--primary);">
+            <i class="fa-solid fa-id-card"></i> 
+            {% if is_staff_viewing %}
+                {% trans "Client Profile" %}
+            {% else %}
+                {% trans "My Profile" %}
+            {% endif %}
+        </h2>
+        
+        <div style="margin-top: 25px; font-size: 1.1rem; line-height: 2;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-user" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">{% trans "Full Name" %}</span><br>
+                    <strong>{{ profile_user.get_full_name }}</strong>
+                </div>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #f4f6f9; margin: 10px 0;">
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-envelope" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">Email</span><br>
+                    <strong>{{ profile_user.email }}</strong>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #f4f6f9; margin: 10px 0;">
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-phone" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">{% trans "Phone" %}</span><br>
+                    <strong>{{ profile_user.profile.phone_number|default:"-" }}</strong>
+                </div>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #f4f6f9; margin: 10px 0;">
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-calendar-check" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">{% trans "Joined" %}</span><br>
+                    <strong>{{ profile_user.date_joined|date:"d M Y" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        {% if is_staff_viewing %}
+            <a href="{% url 'staff_dashboard' %}" class="btn" style="margin-top: 30px; background-color: #7f8c8d;">
+                <i class="fa-solid fa-arrow-left"></i> {% trans "Back to Staff Panel" %}
+            </a>
+        {% else %}
+            <a href="{% url 'client_dashboard' %}" class="btn" style="margin-top: 30px;">
+                <i class="fa-solid fa-arrow-left"></i> {% trans "Back to Dashboard" %}
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

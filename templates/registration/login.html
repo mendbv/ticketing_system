@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    
+    <div class="card" style="max-width: 400px; width: 100%; padding: 40px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="font-size: 3rem; color: var(--accent); margin-bottom: 10px;">
+                <i class="fa-solid fa-circle-user"></i>
+            </div>
+            <h2 style="margin: 0;">{% trans "Welcome Back" %}</h2>
+            <p style="color: #7f8c8d; font-size: 0.9rem;">{% trans "Enter your credentials to access your account." %}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div style="background: #fadbd8; color: #c0392b; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 0.9rem; text-align: center;">
+                    <i class="fa-solid fa-circle-exclamation"></i> {% trans "Invalid username or password." %}
+                </div>
+            {% endif %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="btn" style="margin-top: 10px;">
+                {% trans "Sign In" %} <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="font-size: 0.9rem; color: #7f8c8d;">
+                {% trans "Don't have an account?" %} 
+                <a href="{% url 'signup' %}" style="color: var(--accent); text-decoration: none; font-weight: bold;">{% trans "Sign up" %}</a>
+            </p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

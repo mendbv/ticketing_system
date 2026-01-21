@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="max-width: 600px; margin: auto;">
+    <a href="{% url 'client_dashboard' %}" class="btn btn-secondary" style="margin-bottom: 20px;">
+        <i class="fa-solid fa-arrow-left"></i> {% trans "Back to Dashboard" %}
+    </a>
+
+    <div class="card">
+        <h2>{% trans "Create New Request" %}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="margin-bottom: 20px;">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-paper-plane"></i> {% trans "Send Request" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

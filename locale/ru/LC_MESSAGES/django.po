@@ -1,0 +1,363 @@
+# DOCUITALY RUSSIAN TRANSLATION.
+msgid ""
+msgstr ""
+"Project-Id-Version: DOCUITALY 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-20 12:20+0000\n"
+"PO-Revision-Date: 2026-01-20 14:00+0300\n"
+"Last-Translator: DocuItaly Team <info@docuitaly.com>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: accounts/models.py:8
+msgid "The Email field must be set"
+msgstr "Поле Email обязательно для заполнения"
+
+#: accounts/models.py:21
+msgid "Superuser must have is_staff=True."
+msgstr "Суперпользователь должен иметь is_staff=True."
+
+#: accounts/models.py:23
+msgid "Superuser must have is_superuser=True."
+msgstr "Суперпользователь должен иметь is_superuser=True."
+
+#: accounts/models.py:29
+msgid "email address"
+msgstr "адрес электронной почты"
+
+#: accounts/models.py:30
+msgid "first name"
+msgstr "имя"
+
+#: accounts/models.py:31
+msgid "last name"
+msgstr "фамилия"
+
+#: core/settings.py:85
+msgid "English"
+msgstr "Английский"
+
+#: core/settings.py:86
+msgid "Italiano"
+msgstr "Итальянский"
+
+#: core/settings.py:87
+msgid "Russian"
+msgstr "Русский"
+
+#: templates/base.html:99
+msgid "Home"
+msgstr "Главная"
+
+#: templates/base.html:103
+msgid "My Tickets"
+msgstr "Мои заявки"
+
+#: templates/base.html:108
+msgid "Staff Panel"
+msgstr "Панель сотрудника"
+
+#: templates/base.html:111
+msgid "Admin"
+msgstr "Админка"
+
+#: templates/base.html:115
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/base.html:117 templates/registration/login.html:6
+msgid "Login"
+msgstr "Войти"
+
+#: templates/base.html:141
+msgid "Professional assistance with documents."
+msgstr "Профессиональная помощь с документами."
+
+#: templates/base.html:144
+msgid "Contact Us"
+msgstr "Контакты"
+
+#: templates/registration/login.html:10
+msgid "Enter"
+msgstr "Вход"
+
+#: templates/registration/login.html:12
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
+
+#: templates/registration/login.html:12
+msgid "Sign up"
+msgstr "Зарегистрироваться"
+
+#: templates/registration/signup.html:6
+msgid "Register"
+msgstr "Регистрация"
+
+#: templates/registration/signup.html:10
+msgid "Create Account"
+msgstr "Создать аккаунт"
+
+#: templates/tickets/create_ticket.html:7
+msgid "Back to Dashboard"
+msgstr "Назад в кабинет"
+
+#: templates/tickets/create_ticket.html:11
+msgid "Create New Request"
+msgstr "Создать новую заявку"
+
+#: templates/tickets/create_ticket.html:13
+msgid "Describe what document you need and provide any details:"
+msgstr "Опишите, какой документ вам нужен, и укажите детали:"
+
+#: templates/tickets/create_ticket.html:18
+msgid "Send Request"
+msgstr "Отправить заявку"
+
+#: templates/tickets/dashboard.html:6
+msgid "My Requests"
+msgstr "Мои запросы"
+
+#: templates/tickets/dashboard.html:7
+msgid "New Request"
+msgstr "Новый запрос"
+
+#: templates/tickets/dashboard.html:26
+msgid "Download Document"
+msgstr "Скачать документ"
+
+#: templates/tickets/dashboard.html:32
+msgid "Download Invoice"
+msgstr "Скачать счет"
+
+#: templates/tickets/dashboard.html:42
+msgid "You have no active requests."
+msgstr "У вас пока нет активных заявок."
+
+#: templates/tickets/edit_ticket.html:7
+msgid "Back to Staff Panel"
+msgstr "Назад в панель персонала"
+
+#: templates/tickets/edit_ticket.html:12
+msgid "Manage Ticket"
+msgstr "Управление заявкой"
+
+#: templates/tickets/edit_ticket.html:13
+msgid "Client:"
+msgstr "Клиент:"
+
+#: templates/tickets/edit_ticket.html:14
+msgid "User Note:"
+msgstr "Примечание пользователя:"
+
+#: templates/tickets/edit_ticket.html:21
+msgid "Update Ticket"
+msgstr "Обновить заявку"
+
+#: templates/tickets/staff_dashboard.html:6
+msgid "Staff Workspace"
+msgstr "Рабочий стол сотрудника"
+
+#: templates/tickets/staff_dashboard.html:8
+#, python-format
+msgid ""
+"\n"
+"            %(counter)s active ticket\n"
+"        "
+msgid_plural ""
+"\n"
+"            %(counter)s active tickets\n"
+"        "
+msgstr[0] ""
+"\n"
+"            %(counter)s активная заявка\n"
+"        "
+msgstr[1] ""
+"\n"
+"            %(counter)s активные заявки\n"
+"        "
+msgstr[2] ""
+"\n"
+"            %(counter)s активных заявок\n"
+"        "
+
+#: templates/tickets/staff_dashboard.html:29
+msgid "Request:"
+msgstr "Запрос:"
+
+#: templates/tickets/staff_dashboard.html:46
+msgid "Process Ticket"
+msgstr "Обработать заявку"
+
+#: templates/website/home.html:6
+msgid "Fast & Reliable Documents"
+msgstr "Быстрое оформление документов"
+
+#: templates/website/home.html:8
+msgid ""
+"Track your process in real-time. We handle the bureaucracy so you don't have "
+"to."
+msgstr ""
+"Отслеживайте процесс в реальном времени. Мы берем на себя бюрократию, чтобы вы не тратили время."
+
+#: templates/website/home.html:11
+msgid "Get Started"
+msgstr "Начать"
+
+#: templates/website/home.html:13
+msgid "Go to Dashboard"
+msgstr "Перейти в кабинет"
+
+#: templates/website/home.html:17
+msgid "Latest News"
+msgstr "Последние новости"
+
+#: templates/website/home.html:26
+msgid "Read More"
+msgstr "Читать далее"
+
+#: templates/website/news_detail.html:5
+msgid "Back"
+msgstr "Назад"
+
+#: tickets/models.py:8
+msgid "Pending"
+msgstr "В ожидании"
+
+#: tickets/models.py:9
+msgid "Processing"
+msgstr "В обработке"
+
+#: tickets/models.py:10
+msgid "Ready"
+msgstr "Готово"
+
+#: tickets/models.py:11
+msgid "Rejected"
+msgstr "Отклонено"
+
+#: tickets/models.py:16
+msgid "Client Note"
+msgstr "Заметка клиента"
+
+#: tickets/models.py:17
+msgid "Staff Note"
+msgstr "Заметка сотрудника"
+
+#: website/models.py:7
+msgid "Manager"
+msgstr "Менеджер"
+
+#: website/models.py:8
+msgid "Consultant"
+msgstr "Консультант"
+
+#: website/models.py:9
+msgid "Lawyer"
+msgstr "Юрист"
+
+#: website/models.py:10
+msgid "Support"
+msgstr "Поддержка"
+
+# Системные сообщения Django (ошибки форм)
+#: venv/Lib/site-packages/django/contrib/messages/apps.py:16
+msgid "Messages"
+msgstr "Сообщения"
+
+#: venv/Lib/site-packages/django/core/validators.py:22
+msgid "Enter a valid value."
+msgstr "Введите правильное значение."
+
+#: venv/Lib/site-packages/django/core/validators.py:211
+msgid "Enter a valid email address."
+msgstr "Введите корректный адрес электронной почты."
+
+#: venv/Lib/site-packages/django/forms/fields.py:92
+msgid "This field is required."
+msgstr "Это поле обязательно для заполнения."
+
+# Дополнительные фразы
+msgid "Internal"
+msgstr "Внутреннее"
+
+msgid "Internal:"
+msgstr "Внутренняя заметка:"
+
+msgid "Contact Settings"
+msgstr "Настройки контактов"
+
+msgid "Your request details"
+msgstr "Детали вашего запроса"
+
+msgid "Staff notes"
+msgstr "Заметки персонала"
+
+msgid "Ticket #"
+msgstr "Заявка №"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Action"
+msgstr "Действие"
+
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+msgid "Your Requests"
+msgstr "Ваши заявки"
+
+msgid "Pending..."
+msgstr "Ожидание..."
+
+msgid "Ticket"
+msgstr "Заявка"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Update"
+msgstr "Обновить"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Save Changes"
+msgstr "Сохранить изменения"
+
+msgid "Upload Document"
+msgstr "Загрузить документ"
+
+msgid "Internal Staff Note"
+msgstr "Внутренняя заметка персонала"
+
+msgid "Describe your request..."
+msgstr "Опишите ваш запрос..."
+
+msgid "Submit Request"
+msgstr "Отправить запрос"
+
+msgid "Our News"
+msgstr "Наши новости"
+
+msgid "Our Team"
+msgstr "Наша команда"
+
+msgid "Document Management in Milan"
+msgstr "Управление документами в Милане"
+
+msgid "Get your documents ready with ease and track your status online."
+msgstr "Легко оформляйте документы и следите за статусом онлайн."
+
+msgid "Start Now"
+msgstr "Начать сейчас"
+
+msgid "Document"
+msgstr "Документ"
+
+msgid "Notes"
+msgstr "Заметки"

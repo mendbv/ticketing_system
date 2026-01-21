@@ -1,0 +1,297 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCUITALY</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg-light: #f4f6f9;
+            --text-dark: #2d3436;
+            --white: #ffffff;
+            --status-pending: #f1c40f;
+            --status-ready: #27ae60;
+            --status-rejected: #e74c3c;
+            --status-processing: #3498db;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            text-decoration: none;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-dark);
+            transition: color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .logout-btn:hover { color: #e74c3c; }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white) !important;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;            
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white !important;
+        }
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 12px;
+        }
+        
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fdfdfd;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .container {
+            flex: 1;
+            padding: 40px 5%;
+            max-width: 1200px;
+            margin: auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .card > :last-child:not(.status-strip) {
+            margin-top: auto;
+        }
+
+        .status-strip { position: absolute; top: 0; left: 0; width: 6px; height: 100%; }
+        .st-pending { background: var(--status-pending); }
+        .st-ready { background: var(--status-ready); }
+        .st-rejected { background: var(--status-rejected); }
+        .st-processing { background: var(--status-processing); }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+
+        .bg-pending { background: var(--status-pending); color: #333; }
+        .bg-ready { background: var(--status-ready); }
+        .bg-rejected { background: var(--status-rejected); }
+        .bg-processing { background: var(--status-processing); }
+
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 40px 5%;
+            margin-top: auto;
+        }
+        
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
+
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="{% url 'home' %}" class="logo">
+        <i class="fa-solid fa-passport"></i> DOCUITALY
+    </a>
+    
+    <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> {% trans "Home" %}</a>
+        
+        {% if user.is_authenticated %}
+            <a href="{% url 'client_dashboard' %}"><i class="fa-solid fa-folder-open"></i> {% trans "My Tickets" %}</a>
+            
+            {% if user.is_staff %}
+                <a href="{% url 'staff_dashboard' %}" class="btn btn-small" style="background-color: #e74c3c; color: white; margin-left: 10px;">
+                    <i class="fa-solid fa-user-shield"></i> {% trans "Staff Panel" %}
+                </a>
+            {% endif %}
+
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> {% trans "Logout" %}
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-small"><i class="fa-solid fa-right-to-bracket"></i> {% trans "Login" %}</a>
+        {% endif %}
+
+        <form action="{% url 'set_language' %}" method="post" style="display: inline; margin-left: 15px;">
+            {% csrf_token %}
+            <!-- Value удален, чтобы Django сам определил URL для редиректа на новом языке -->
+            <input name="next" type="hidden"> 
+            <select name="language" onchange="this.form.submit()" style="border: none; background: transparent; font-family: 'Inter'; cursor: pointer; font-weight: bold; padding: 0; width: auto; margin-bottom: 0;">
+                {% get_current_language as CURRENT_LANG %}
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}" {% if lang.0 == CURRENT_LANG %}selected{% endif %}>{{ lang.0|upper }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div>
+            <h3 style="margin-top: 0;">DOCUITALY</h3>
+            <p>{% trans "Professional assistance with documents." %}</p>
+        </div>
+        <div>
+            {% if contacts %}
+                <div style="margin-bottom: 10px;"><i class="fa-solid fa-phone"></i> {{ contacts.phone }}</div>
+                <div><i class="fa-solid fa-envelope"></i> {{ contacts.email }}</div>
+            {% endif %}
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

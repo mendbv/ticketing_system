@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="max-width: 600px; margin: auto;">
+    <div class="card">
+        <h2 style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-top: 0; color: var(--primary);">
+            <i class="fa-solid fa-id-card"></i> 
+            {% trans "Client Details" %}
+        </h2>
+        
+        <div style="margin-top: 25px; font-size: 1.1rem; line-height: 2;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-user" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">{% trans "Full Name" %}</span><br>
+                    <strong>{{ client_user.get_full_name }}</strong>
+                </div>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #f4f6f9; margin: 10px 0;">
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-envelope" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">Email</span><br>
+                    <strong><a href="mailto:{{ client_user.email }}">{{ client_user.email }}</a></strong>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #f4f6f9; margin: 10px 0;">
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-phone" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">{% trans "Phone" %}</span><br>
+                    <strong>{{ client_user.phone|default:"-" }}</strong>
+                </div>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #f4f6f9; margin: 10px 0;">
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-calendar-check" style="color: var(--accent); width: 20px;"></i>
+                <div>
+                    <span style="color: #777; font-size: 0.9rem;">{% trans "Date Joined" %}</span><br>
+                    <strong>{{ client_user.date_joined|date:"d M Y, H:i" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <a href="{% url 'staff_dashboard' %}" class="btn" style="background-color: #7f8c8d;">
+                <i class="fa-solid fa-arrow-left"></i> {% trans "Back to Staff Panel" %}
+            </a>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <h3>{% trans "Ticket History" %}</h3>
+        {% for ticket in client_user.tickets.all %}
+            <div class="card" style="margin-bottom: 15px; padding: 15px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <strong>#{{ ticket.ticket_number }}</strong>
+                    <span class="badge bg-{{ ticket.status }}">{{ ticket.get_status_display }}</span>
+                </div>
+                <p>{{ ticket.user_note|truncatechars:100 }}</p>
+                <small style="color: #999;">{{ ticket.created_at|date:"d M Y" }}</small>
+            </div>
+        {% empty %}
+            <p style="color: #777;">{% trans "No tickets found for this user." %}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

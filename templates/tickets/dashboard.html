@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>{% trans "My Requests" %}</h2>
+    <a href="{% url 'create_ticket' %}" class="btn" style="width: auto;">
+        <i class="fa-solid fa-plus"></i> {% trans "New Request" %}
+    </a>
+</div>
+
+{% if tickets %}
+<div class="card-grid">
+    {% for ticket in tickets %}
+    <div class="card">
+        <div class="status-strip st-{{ ticket.status }}"></div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <span style="color: #999; font-size: 0.9rem;">#{{ ticket.ticket_number }}</span>
+            <span class="badge bg-{{ ticket.status }}">{{ ticket.get_status_display }}</span>
+        </div>
+        
+        <h3 style="margin: 15px 0;">{{ ticket.user_note|truncatechars:50 }}</h3>
+        
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+            {% if ticket.document %}
+                <a href="{{ ticket.document.url }}" class="btn btn-small" style="background: var(--status-ready); justify-content: center;">
+                    <i class="fa-solid fa-download"></i> {% trans "Download Document" %}
+                </a>
+            {% endif %}
+            
+            {% if ticket.invoice %}
+                <a href="{{ ticket.invoice.url }}" class="btn btn-small" style="background: var(--primary); justify-content: center;">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> {% trans "Download Invoice" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <div style="text-align: center; padding: 50px; color: #999;">
+        <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 20px;"></i>
+        <p>{% trans "You have no requests yet." %}</p>
+    </div>
+{% endif %}
+{% endblock %}

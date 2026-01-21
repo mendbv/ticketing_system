@@ -1,0 +1,51 @@
+{% load i18n %}
+
+<div class="card" style="border-left: 5px solid {% if ticket.status == 'ready' %}#27ae60{% elif ticket.status == 'pending' %}#f1c40f{% else %}#3498db{% endif %};">
+    
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+        <div style="width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;">
+            {{ ticket.client.first_name|first|default:"U" }}
+        </div>
+        <div>
+            <!-- Ссылка на профиль -->
+            <a href="{% url 'staff_user_detail' ticket.client.pk %}" style="font-weight: 700; color: var(--primary); font-size: 1rem; text-decoration: none; display: block;">
+                {{ ticket.client.get_full_name|default:ticket.client.email }} <i class="fa-solid fa-up-right-from-square" style="font-size: 0.8rem; opacity: 0.5;"></i>
+            </a>
+            
+            <a href="mailto:{{ ticket.client.email }}" style="font-size: 0.85rem; color: var(--accent); text-decoration: none;">
+                <i class="fa-solid fa-envelope"></i> {{ ticket.client.email }}
+            </a>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <span class="badge bg-{{ ticket.status }}">{{ ticket.get_status_display }}</span>
+        <span style="color: #999; font-size: 0.85rem; font-weight: 600;">#{{ ticket.ticket_number }}</span>
+    </div>
+    
+    <p style="font-style: italic; color: #555; line-height: 1.5; margin-bottom: 15px;">
+        "{{ ticket.user_note|truncatechars:80 }}"
+    </p>
+    
+    {% if ticket.staff_internal_note %}
+        <div style="background: #fff3cd; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; color: #856404; border: 1px solid #ffeeba;">
+            <i class="fa-solid fa-lock"></i> <strong>{% trans "Internal Note" %}:</strong><br>
+            {{ ticket.staff_internal_note|truncatechars:100 }}
+        </div>
+    {% endif %}
+
+    <div style="display: flex; gap: 10px; margin-top: auto;">
+        {% if show_quick_action %}
+            <form action="{% url 'quick_move_to_processing' ticket.pk %}" method="post" style="flex: 1;">
+                {% csrf_token %}
+                <button type="submit" class="btn" style="background: #3498db; width: 100%; padding: 10px;">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </form>
+        {% endif %}
+
+        <a href="{% url 'edit_ticket' ticket.pk %}" class="btn btn-secondary" style="flex: 4; justify-content: center; padding: 10px;">
+            <i class="fa-solid fa-pen-to-square"></i> {% trans "Process" %}
+        </a>
+    </div>
+</div>

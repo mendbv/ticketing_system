@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=tickets_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/tickets_db
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
