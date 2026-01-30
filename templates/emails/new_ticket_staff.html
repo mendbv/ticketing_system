@@ -1,0 +1,26 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+    <h2 style="color: #2c3e50; margin-top: 0;">New Ticket Request</h2>
+    
+    <p>A new request has been submitted by a client.</p>
+    
+    <table width="100%" cellpadding="10" cellspacing="0" style="background-color: #f9f9f9; border: 1px solid #eee; margin: 20px 0;">
+        <tr>
+            <td width="30%" style="font-weight: bold; color: #555;">Ticket #:</td>
+            <td>{{ ticket.ticket_number }}</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; color: #555;">Client:</td>
+            <td>{{ ticket.client.get_full_name }} ({{ ticket.client.email }})</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; color: #555;">Note:</td>
+            <td style="font-style: italic;">"{{ ticket.user_note }}"</td>
+        </tr>
+    </table>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ staff_url }}" style="background-color: #2c3e50; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Manage Ticket</a>
+    </div>
+{% endblock %}

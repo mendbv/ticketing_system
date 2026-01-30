@@ -259,10 +259,11 @@
             <a href="{% url 'login' %}" class="btn btn-small"><i class="fa-solid fa-right-to-bracket"></i> {% trans "Login" %}</a>
         {% endif %}
 
-        <form action="{% url 'set_language' %}" method="post" style="display: inline; margin-left: 15px;">
+        <!-- ИЗМЕНЕННАЯ ФОРМА ЯЗЫКА -->
+        <form action="{% url 'switch_language_custom' %}" method="post" style="display: inline; margin-left: 15px;">
             {% csrf_token %}
-            <!-- Value удален, чтобы Django сам определил URL для редиректа на новом языке -->
-            <input name="next" type="hidden"> 
+            <!-- Value обязательно нужен для новой логики -->
+            <input name="next" type="hidden" value="{{ request.get_full_path }}">
             <select name="language" onchange="this.form.submit()" style="border: none; background: transparent; font-family: 'Inter'; cursor: pointer; font-weight: bold; padding: 0; width: auto; margin-bottom: 0;">
                 {% get_current_language as CURRENT_LANG %}
                 {% get_available_languages as LANGUAGES %}

@@ -1,9 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
+from django.core.mail import send_mail
+from django.template.loader import render_to_string # Импорт для рендера HTML
+from django.utils.html import strip_tags # Импорт для очистки HTML (plain text версия)
+from django.conf import settings
 from django.db.models import Q
 from .models import Ticket
 from .forms import TicketCreateForm, TicketUpdateForm
+
+User = get_user_model()
+
+# Вспомогательная функция для отправки HTML писем
+def send_html_email(subject, template_name, context, recipient_list):
+    html_message = render_to_string(template_name, context)
+    plain_message = strip_tags(html_message) # Создает текстовую версию без тегов
+    
+    send_mail(
+        subject=subject,
+        message=plain_message, # Текстовая версия (fallback)
+        from_email=None,
+        recipient_list=recipient_list,
+        html_message=html_message, # Красивая HTML версия
+        fail_silently=True,
+    )
 
 @login_required
 def client_dashboard(request):
@@ -15,10 +36,8 @@ def staff_dashboard(request):
     if not request.user.is_staff:
         return redirect('client_dashboard')
 
-    # Базовый QuerySet
     tickets = Ticket.objects.all()
 
-    # 1. Поиск (по номеру тикета, имени, фамилии или email клиента)
     query = request.GET.get('q')
     if query:
         tickets = tickets.filter(
@@ -28,14 +47,8 @@ def staff_dashboard(request):
             Q(client__last_name__icontains=query)
         )
 
-    # 2. Разделение по статусам
-    # Pending: сортируем от старых к новым (чтобы не забыть старые)
     pending_tickets = tickets.filter(status='pending').order_by('created_at')
-    
-    # Processing: сортируем по дате обновления
     processing_tickets = tickets.filter(status='processing').order_by('-updated_at')
-    
-    # Completed (Ready + Rejected): архивные
     completed_tickets = tickets.filter(status__in=['ready', 'rejected']).order_by('-updated_at')
 
     context = {
@@ -54,10 +67,24 @@ def quick_move_to_processing(request, pk):
     
     ticket = get_object_or_404(Ticket, pk=pk)
     
-    # Меняем статус только если он сейчас Pending
     if ticket.status == 'pending':
         ticket.status = 'processing'
         ticket.save()
+
+        # === EMAIL TO CLIENT (HTML) ===
+        send_html_email(
+            subject=f"Ticket Update #{ticket.ticket_number}",
+            template_name='emails/status_update.html',
+            context={
+                'user_name': ticket.client.first_name,
+                'ticket_number': ticket.ticket_number,
+                'status': ticket.status,
+                'status_display': ticket.get_status_display(),
+                # request.build_absolute_uri строит полную ссылку (http://...)
+                'dashboard_url': request.build_absolute_uri('/tickets/dashboard/')
+            },
+            recipient_list=[ticket.client.email]
+        )
         
     return redirect('staff_dashboard')
 
@@ -69,6 +96,21 @@ def create_ticket(request):
             ticket = form.save(commit=False)
             ticket.client = request.user
             ticket.save()
+
+            # === EMAIL TO STAFF (HTML) ===
+            staff_emails = User.objects.filter(is_staff=True).values_list('email', flat=True)
+            
+            if staff_emails:
+                send_html_email(
+                    subject=f"New Ticket: #{ticket.ticket_number}",
+                    template_name='emails/new_ticket_staff.html',
+                    context={
+                        'ticket': ticket,
+                        'staff_url': request.build_absolute_uri('/tickets/staff/')
+                    },
+                    recipient_list=list(staff_emails)
+                )
+
             return redirect('client_dashboard')
     else:
         form = TicketCreateForm()
@@ -78,11 +120,30 @@ def create_ticket(request):
 def edit_ticket(request, pk):
     if not request.user.is_staff:
         return redirect('client_dashboard')
+    
     ticket = get_object_or_404(Ticket, pk=pk)
+    old_status = ticket.status
+
     if request.method == 'POST':
         form = TicketUpdateForm(request.POST, request.FILES, instance=ticket)
         if form.is_valid():
-            form.save()
+            updated_ticket = form.save()
+            
+            # === EMAIL TO CLIENT (HTML) ===
+            if old_status != updated_ticket.status:
+                send_html_email(
+                    subject=f"Ticket Update #{updated_ticket.ticket_number}",
+                    template_name='emails/status_update.html',
+                    context={
+                        'user_name': updated_ticket.client.first_name,
+                        'ticket_number': updated_ticket.ticket_number,
+                        'status': updated_ticket.status,
+                        'status_display': updated_ticket.get_status_display(),
+                        'dashboard_url': request.build_absolute_uri('/tickets/dashboard/')
+                    },
+                    recipient_list=[updated_ticket.client.email]
+                )
+
             return redirect('staff_dashboard')
     else:
         form = TicketUpdateForm(instance=ticket)

@@ -61,7 +61,7 @@ DATABASES = {
         'NAME': 'tickets_db',
         'USER': 'user',
         'PASSWORD': 'password',
-        'HOST': 'db',
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': '5432',
     }
 }
@@ -88,16 +88,21 @@ LANGUAGES = [
     ('ru', _('Russian')),
 ]
 
-LOCALE_PATHS = [BASE_DIR / 'locale/']
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'DOCUITALY System <system@docuitaly.com>'
 
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'client_dashboard'
 LOGOUT_REDIRECT_URL = 'home'
