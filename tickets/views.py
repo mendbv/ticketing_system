@@ -19,10 +19,10 @@ def send_html_email(subject, template_name, context, recipient_list):
     
     send_mail(
         subject=subject,
-        message=plain_message, # Текстовая версия (fallback)
+        message=plain_message,
         from_email=None,
         recipient_list=recipient_list,
-        html_message=html_message, # Красивая HTML версия
+        html_message=html_message,
         fail_silently=True,
     )
 
