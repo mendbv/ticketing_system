@@ -2,3 +2,7 @@ django
 psycopg2-binary
 pillow
 django-environ
+django-allauth
+requests
+PyJWT
+cryptography

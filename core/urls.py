@@ -4,18 +4,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 
-# Маршрут переключения языка (вне i18n_patterns)
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 ]
 
-# Локализованные маршруты
-# Мы убрали prefix_default_language=False, теперь ВСЕ языки имеют префикс (/en/, /it/, /ru/)
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')), 
-    path('accounts/', include('accounts.urls')),            
+    
+    # Сначала наши кастомные вьюхи (профиль, стафф панель)
+    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('allauth.urls')),
+    
     path('tickets/', include('tickets.urls')),
+    path('services/', include('services.urls')),
     path('', include('website.urls')),
 )
 

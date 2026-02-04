@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    /* === СЕТКА ЛИЧНОГО КАБИНЕТА === */
+    .account-container {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+        align-items: flex-start; /* ВАЖНО: Это убирает пустое место снизу на ПК */
+    }
+
+    /* === САЙДБАР (ЛЕВАЯ КОЛОНКА) === */
+    .account-sidebar {
+        flex: 0 0 280px; /* Фиксированная ширина на ПК */
+        position: sticky;
+        top: 100px; /* Прилипает при скролле */
+    }
+
+    .profile-card {
+        padding: 0;
+        overflow: hidden;
+        border: none; /* Убираем лишние границы, если есть в base */
+    }
+
+    .profile-header {
+        padding: 25px 20px;
+        text-align: center;
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 10px;
+    }
+
+    .profile-initials {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 10px auto;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    /* === ССЫЛКИ МЕНЮ === */
+    .account-menu {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 0;
+    }
+
+    .account-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: var(--text-dark);
+        text-decoration: none;
+        border-left: 4px solid transparent;
+        transition: all 0.2s;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .account-link:hover {
+        background: #f4f6f9;
+        color: var(--primary);
+    }
+
+    .account-link.active {
+        border-left-color: var(--accent);
+        background: #f0f7ff;
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .account-link i {
+        width: 25px;
+        text-align: center;
+        margin-right: 10px;
+        color: #999; /* Иконки чуть бледнее */
+    }
+    
+    .account-link.active i {
+        color: var(--accent);
+    }
+
+    .account-link.logout {
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+    }
+    .account-link.logout:hover {
+        background: #fff5f5;
+        color: #e74c3c;
+    }
+    .account-link.logout:hover i { color: #e74c3c; }
+
+    /* === ОСНОВНОЙ КОНТЕНТ (ПРАВАЯ КОЛОНКА) === */
+    .account-main {
+        flex: 1;
+        min-width: 0; /* Предотвращает переполнение flex-контейнера */
+    }
+
+    /* === СООБЩЕНИЯ (MESSAGES) === */
+    .alert-box {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+
+    /* === МОБИЛЬНАЯ ВЕРСИЯ === */
+    @media (max-width: 850px) {
+        .account-container {
+            flex-direction: column; /* Столбик вместо строки */
+            gap: 20px;
+        }
+
+        .account-sidebar {
+            width: 100%;
+            flex: none;
+            position: static; /* Убираем прилипание на мобильных */
+        }
+
+        /* Делаем шапку профиля горизонтальной на мобильных для экономии места */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            padding: 15px;
+            gap: 15px;
+        }
+        
+        .profile-avatar, .profile-initials {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 0;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .account-menu {
+            /* Можно сделать меню горизонтальным скроллом, но пока оставим списком */
+            border-top: 1px solid #eee;
+        }
+    }
+</style>
+
+<div class="account-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="account-sidebar">
+        <div class="card profile-card">
+            
+            <!-- User Info -->
+            <div class="profile-header">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" class="profile-avatar">
+                {% else %}
+                    <div class="profile-initials">
+                        {{ user.first_name|first|upper }}
+                    </div>
+                {% endif %}
+                
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem;">{{ user.get_full_name }}</h3>
+                    <p style="color: #777; margin: 3px 0 0 0; font-size: 0.85rem; word-break: break-all;">{{ user.email }}</p>
+                </div>
+            </div>
+
+            <!-- Menu Links -->
+            <div class="account-menu">
+                <a href="{% url 'client_dashboard' %}" class="account-link {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-ticket"></i> {% trans "My Tickets" %}
+                </a>
+                <a href="{% url 'profile_confirmation' %}" class="account-link {% if request.resolver_match.url_name == 'profile_confirmation' %}active{% endif %}">
+                    <i class="fa-solid fa-user-gear"></i> {% trans "Profile Settings" %}
+                </a>
+
+                <form action="{% url 'account_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="account-link logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> {% trans "Logout" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="account-main">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-box {% if message.tags == 'warning' %}alert-warning{% else %}alert-success{% endif %}">
+                    {% if message.tags == 'warning' %}
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    {% else %}
+                        <i class="fa-solid fa-check-circle"></i>
+                    {% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block account_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

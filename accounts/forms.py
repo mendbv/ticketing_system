@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from .models import User
 
 class SignUpForm(UserCreationForm):
+    # ... (старый код SignUpForm остается без изменений) ...
     email = forms.EmailField(
         required=True, 
         widget=forms.EmailInput(attrs={'placeholder': 'example@mail.com'})
@@ -37,3 +38,14 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+# Новая форма для подтверждения профиля
+class ProfileConfirmationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone', 'avatar']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+39 ...'}),
+        }

@@ -3,19 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
-from django.template.loader import render_to_string # Импорт для рендера HTML
-from django.utils.html import strip_tags # Импорт для очистки HTML (plain text версия)
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags 
 from django.conf import settings
+from django.contrib import messages
 from django.db.models import Q
 from .models import Ticket
 from .forms import TicketCreateForm, TicketUpdateForm
 
 User = get_user_model()
 
-# Вспомогательная функция для отправки HTML писем
 def send_html_email(subject, template_name, context, recipient_list):
     html_message = render_to_string(template_name, context)
-    plain_message = strip_tags(html_message) # Создает текстовую версию без тегов
+    plain_message = strip_tags(html_message)
     
     send_mail(
         subject=subject,
@@ -25,6 +25,15 @@ def send_html_email(subject, template_name, context, recipient_list):
         html_message=html_message,
         fail_silently=True,
     )
+
+@login_required
+def client_dashboard(request):
+    if not request.user.phone:
+        messages.warning(request, "Please complete your profile contact details to continue.")
+        return redirect('profile_confirmation')
+
+    tickets = Ticket.objects.filter(client=request.user).order_by('-created_at')
+    return render(request, 'tickets/dashboard.html', {'tickets': tickets})
 
 @login_required
 def client_dashboard(request):

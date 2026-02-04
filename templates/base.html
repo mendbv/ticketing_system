@@ -28,6 +28,12 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: 100%;
+            /* Делаем фон html таким же как у body, чтобы при "отскоке" скролла не было белого */
+            background-color: var(--bg-light); 
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
@@ -35,8 +41,21 @@
             color: var(--text-dark);
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            /* Используем dvh (dynamic viewport height) для корректной работы на мобильных */
+            min-height: 100dvh; 
         }
+
+        /* === ИСПРАВЛЕНИЕ ТЕКСТА === */
+        p, h1, h2, h3, h4, h5, h6, span, div, li {
+            /* Заставляет длинные слова переноситься */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            /* Добавляет переносы (дефисы), если браузер поддерживает */
+            hyphens: auto; 
+        }
+
+        /* ================= NAVIGATION ================= */
 
         nav {
             background: rgba(255, 255, 255, 0.95);
@@ -91,6 +110,8 @@
             gap: 5px;
         }
         .logout-btn:hover { color: #e74c3c; }
+
+        /* ================= BUTTONS ================= */
 
         .btn {
             background: var(--primary);
@@ -156,6 +177,8 @@
             font-size: 0.9rem;
         }
 
+        /* ================= LAYOUT & CARDS ================= */
+
         .container {
             flex: 1;
             padding: 40px 5%;
@@ -187,6 +210,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            overflow: hidden; /* Чтобы контент не вылезал за скругления */
         }
         
         .card > :last-child:not(.status-strip) {
@@ -214,11 +238,14 @@
         .bg-rejected { background: var(--status-rejected); }
         .bg-processing { background: var(--status-processing); }
 
+        /* ================= FOOTER ================= */
+
         footer {
             background: var(--primary);
             color: white;
             padding: 40px 5%;
             margin-top: auto;
+            width: 100%;
         }
         
         .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; }
@@ -226,6 +253,14 @@
         @media (max-width: 768px) {
             nav { flex-direction: column; gap: 15px; }
             .nav-links { flex-wrap: wrap; justify-content: center; }
+            
+            /* Уменьшаем отступы на мобильных для контейнера */
+            .container { padding: 30px 15px; }
+            
+            /* Уменьшаем размер шрифта заголовков, чтобы не разрывали экран */
+            h1 { font-size: 1.8rem; }
+            
+            .card { padding: 20px; }
         }
     </style>
 </head>
@@ -239,30 +274,26 @@
     
     <div class="nav-links">
         <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> {% trans "Home" %}</a>
+        <a href="{% url 'service_list' %}"><i class="fa-solid fa-layer-group"></i> {% trans "Services" %}</a>
         
         {% if user.is_authenticated %}
-            <a href="{% url 'client_dashboard' %}"><i class="fa-solid fa-folder-open"></i> {% trans "My Tickets" %}</a>
-            
+            <!-- Единая ссылка на Личный Кабинет -->
+            <a href="{% url 'client_dashboard' %}" class="btn btn-small" style="background: var(--bg-light); color: var(--primary) !important; border: 1px solid #ddd;">
+                <i class="fa-solid fa-user"></i> {% trans "My Account" %}
+            </a>
+
             {% if user.is_staff %}
-                <a href="{% url 'staff_dashboard' %}" class="btn btn-small" style="background-color: #e74c3c; color: white; margin-left: 10px;">
-                    <i class="fa-solid fa-user-shield"></i> {% trans "Staff Panel" %}
+                <a href="{% url 'staff_dashboard' %}" class="btn btn-small" style="background-color: #e74c3c; color: white;">
+                    <i class="fa-solid fa-user-shield"></i> Staff
                 </a>
             {% endif %}
-
-            <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">
-                    <i class="fa-solid fa-right-from-bracket"></i> {% trans "Logout" %}
-                </button>
-            </form>
+            
         {% else %}
-            <a href="{% url 'login' %}" class="btn btn-small"><i class="fa-solid fa-right-to-bracket"></i> {% trans "Login" %}</a>
+            <a href="{% url 'account_login' %}" class="btn btn-small"><i class="fa-solid fa-right-to-bracket"></i> {% trans "Login" %}</a>
         {% endif %}
 
-        <!-- ИЗМЕНЕННАЯ ФОРМА ЯЗЫКА -->
-        <form action="{% url 'switch_language_custom' %}" method="post" style="display: inline; margin-left: 15px;">
+        <form action="{% url 'switch_language_custom' %}" method="post" style="display: inline; margin-left: 10px;">
             {% csrf_token %}
-            <!-- Value обязательно нужен для новой логики -->
             <input name="next" type="hidden" value="{{ request.get_full_path }}">
             <select name="language" onchange="this.form.submit()" style="border: none; background: transparent; font-family: 'Inter'; cursor: pointer; font-weight: bold; padding: 0; width: auto; margin-bottom: 0;">
                 {% get_current_language as CURRENT_LANG %}

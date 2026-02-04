@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; padding: 20px 0;">
+    
+    <div class="card" style="max-width: 500px; width: 100%; padding: 40px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="font-size: 3rem; color: var(--accent); margin-bottom: 10px;">
+                <i class="fa-brands fa-google"></i>
+            </div>
+            <h2 style="margin: 0;">{% trans "Final Step" %}</h2>
+            <p style="color: #7f8c8d;">
+                {% trans "You are about to use your Google account to login to DOCUITALY." %}
+            </p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div style="background: #fadbd8; color: #c0392b; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 0.85rem;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: #999; display: block; margin-top: -5px; margin-bottom: 5px; font-size: 0.8rem;">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <button type="submit" class="btn" style="margin-top: 10px;">
+                {% trans "Complete Registration" %} <i class="fa-solid fa-check"></i>
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'account_base.html' %}
 {% load i18n %}
 
-{% block content %}
+{% block account_content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <h2>{% trans "My Requests" %}</h2>
+    <h2 style="margin: 0;">{% trans "My Requests" %}</h2>
     <a href="{% url 'create_ticket' %}" class="btn" style="width: auto;">
         <i class="fa-solid fa-plus"></i> {% trans "New Request" %}
     </a>

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load i18n humanize %}
+
+{% block content %}
+<style>
+    /* Стили для сетки страницы услуги */
+    .service-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* На ПК: 2 части описание, 1 часть сайдбар */
+        gap: 40px;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+        .service-grid {
+            grid-template-columns: 1fr; /* На мобильном: одна колонка */
+        }
+        
+        /* Меняем порядок: сначала цена/кнопка, потом описание (опционально) 
+           или оставляем как есть. Сейчас оставим как есть: описание сверху. */
+    }
+</style>
+
+<div style="max-width: 900px; margin: auto;">
+    <a href="{% url 'service_list' %}" class="btn btn-secondary" style="margin-bottom: 20px; display: inline-flex; width: auto;">
+        <i class="fa-solid fa-arrow-left"></i> {% trans "Back to Services" %}
+    </a>
+
+    <div class="card" style="padding: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <span class="badge" style="background: var(--accent); margin-bottom: 10px; display: inline-block;">
+                    {{ service.category.name }}
+                </span>
+                <h1 style="margin: 10px 0; font-size: 2.5rem; color: var(--primary);">{{ service.name }}</h1>
+            </div>
+            
+            <!-- Блок цены -->
+            <div style="text-align: right;">
+                <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">
+                    €<span id="price-display">{{ service.price|intcomma }}</span>
+                </div>
+                <div style="color: #7f8c8d; font-size: 0.9rem;">{% trans "All taxes included" %}</div>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+        <!-- Используем класс service-grid вместо жестких стилей -->
+        <div class="service-grid">
+            <!-- Левая колонка: Описание -->
+            <div>
+                <h3>{% trans "Description" %}</h3>
+                <div style="line-height: 1.8; color: #444;">
+                    {{ service.full_description|linebreaks }}
+                </div>
+            </div>
+            
+            <!-- Правая колонка: Выбор и Документы -->
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; height: fit-content;">
+                
+                <!-- Выбор вариации услуги -->
+                <div style="margin-bottom: 25px;">
+                    <label for="service-variant" style="margin-bottom: 10px;">{% trans "Choose Option:" %}</label>
+                    <select id="service-variant" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <!-- Базовая опция -->
+                        <option value="{{ service.price }}" selected>
+                            {{ service.name }} - €{{ service.price|intcomma }}
+                        </option>
+                        
+                        <!-- Дополнительные вариации -->
+                        {% for variant in service.variants.all %}
+                            <option value="{{ variant.price }}">
+                                {{ variant.name }} - €{{ variant.price|intcomma }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <h4 style="margin-top: 0; color: var(--primary);">
+                    <i class="fa-solid fa-file-circle-check"></i> {% trans "Required Documents" %}
+                </h4>
+                <div style="font-size: 0.9rem; color: #555; line-height: 1.6;">
+                    {{ service.documents_required|linebreaks }}
+                </div>
+
+                <button class="btn" style="margin-top: 20px; width: 100%; background-color: #e0e0e0; cursor: not-allowed;" disabled>
+                    <i class="fa-solid fa-cart-plus"></i> {% trans "Add to Cart" %} (Coming Soon)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для обновления цены -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const variantSelect = document.getElementById('service-variant');
+        const priceDisplay = document.getElementById('price-display');
+
+        variantSelect.addEventListener('change', function() {
+            const price = parseFloat(this.value).toFixed(2);
+            // Если используем запятые для десятичных (итальянский стандарт)
+            const formattedPrice = price.replace('.', ','); 
+            priceDisplay.textContent = formattedPrice;
+        });
+    });
+</script>
+{% endblock %}

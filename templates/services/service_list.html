@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load i18n humanize %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 50px;">
+    <h1>{% trans "Our Services" %}</h1>
+    <p style="color: #666; max-width: 600px; margin: 0 auto;">
+        {% trans "Choose from our wide range of fiscal assistance services. We handle the bureaucracy for you." %}
+    </p>
+</div>
+
+{% for category in categories %}
+    {% if category.services.exists %}
+        <div style="margin-bottom: 60px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+                <div style="font-size: 1.5rem; color: var(--accent);">
+                    <i class="{{ category.icon }}"></i>
+                </div>
+                <h2 style="margin: 0; color: var(--primary);">{{ category.name }}</h2>
+            </div>
+
+            <div class="card-grid">
+                {% for service in category.services.all %}
+                    {% if service.is_active %}
+                        <div class="card" style="transition: transform 0.2s; cursor: default;">
+                            <h3 style="margin-top: 0; min-height: 50px;">{{ service.name }}</h3>
+                            <p style="color: #666; font-size: 0.9rem; flex-grow: 1;">
+                                {{ service.short_description|truncatechars:100 }}
+                            </p>
+                            
+                            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 800; font-size: 1.2rem; color: var(--primary);">
+                                    €{{ service.price|intcomma }}
+                                </span>
+                                <a href="{% url 'service_detail' service.slug %}" class="btn btn-small" style="width: auto;">
+                                    {% trans "Details" %} <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+{% endblock %}
