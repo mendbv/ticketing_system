@@ -265,6 +265,80 @@
     </style>
 </head>
 
+{% if user.is_authenticated and cart_count > 0 %}
+    <a href="{% url 'view_cart' %}" class="floating-cart-btn">
+        <div class="cart-icon-container">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-counter">{{ cart_count }}</span>
+        </div>
+        <span class="cart-label">{% trans "Checkout" %}</span>
+    </a>
+
+    <style>
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent); /* Цвет акцента из настроек */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            z-index: 9999;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .floating-cart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+
+        .cart-icon-container {
+            position: relative;
+        }
+
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--accent);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* На мобильных делаем кнопку компактнее */
+        @media (max-width: 768px) {
+            .floating-cart-btn {
+                padding: 15px;
+                border-radius: 50%;
+                bottom: 20px;
+                right: 20px;
+            }
+            .cart-label {
+                display: none; /* Прячем текст, оставляем иконку */
+            }
+        }
+    </style>
+{% endif %}
+
 <body>
 
 <nav>

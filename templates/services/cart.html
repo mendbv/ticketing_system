@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load i18n humanize %}
+
+{% block content %}
+<div style="max-width: 800px; margin: auto;">
+    <h1 style="margin-bottom: 30px;">
+        <i class="fa-solid fa-cart-shopping"></i> {% trans "Shopping Cart" %}
+    </h1>
+
+    {% if cart.items.exists %}
+        <div class="card" style="padding: 0; overflow: hidden;">
+            {% for item in cart.items.all %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #eee;">
+                    <div>
+                        <h3 style="margin: 0;">{{ item.service.name }}</h3>
+                        {% if item.variant %}
+                            <span class="badge" style="background: var(--accent);">{{ item.variant.name }}</span>
+                        {% endif %}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <span style="font-weight: bold; font-size: 1.2rem;">€{{ item.get_price|intcomma }}</span>
+                        <a href="{% url 'remove_from_cart' item.id %}" style="color: #e74c3c;">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <div style="padding: 20px; background: #f8f9fa; text-align: right;">
+                <h2 style="margin: 0; color: var(--primary);">
+                    {% trans "Total:" %} €{{ cart.get_total_price|intcomma }}
+                </h2>
+                <small style="color: #777;">{% trans "Taxes included" %}</small>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+            <a href="{% url 'service_list' %}" class="btn btn-secondary" style="width: auto;">
+                <i class="fa-solid fa-arrow-left"></i> {% trans "Continue Shopping" %}
+            </a>
+            
+            <!-- Кнопка оплаты (пока просто заглушка, Stripe будет на следующем шаге) -->
+            <button class="btn" style="width: auto; background: #27ae60;">
+                {% trans "Proceed to Checkout" %} <i class="fa-solid fa-credit-card"></i>
+            </button>
+        </div>
+
+    {% else %}
+        <div class="card" style="text-align: center; padding: 50px;">
+            <i class="fa-solid fa-cart-arrow-down" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
+            <h2>{% trans "Your cart is empty" %}</h2>
+            <p>{% trans "Looks like you haven't added any services yet." %}</p>
+            <a href="{% url 'service_list' %}" class="btn" style="width: auto; margin-top: 10px;">
+                {% trans "Browse Services" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

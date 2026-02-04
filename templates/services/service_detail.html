@@ -3,21 +3,13 @@
 
 {% block content %}
 <style>
-    /* Стили для сетки страницы услуги */
     .service-grid {
         display: grid;
-        grid-template-columns: 2fr 1fr; /* На ПК: 2 части описание, 1 часть сайдбар */
+        grid-template-columns: 2fr 1fr;
         gap: 40px;
     }
-
-    /* Адаптивность для мобильных устройств */
     @media (max-width: 768px) {
-        .service-grid {
-            grid-template-columns: 1fr; /* На мобильном: одна колонка */
-        }
-        
-        /* Меняем порядок: сначала цена/кнопка, потом описание (опционально) 
-           или оставляем как есть. Сейчас оставим как есть: описание сверху. */
+        .service-grid { grid-template-columns: 1fr; }
     }
 </style>
 
@@ -35,7 +27,6 @@
                 <h1 style="margin: 10px 0; font-size: 2.5rem; color: var(--primary);">{{ service.name }}</h1>
             </div>
             
-            <!-- Блок цены -->
             <div style="text-align: right;">
                 <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">
                     €<span id="price-display">{{ service.price|intcomma }}</span>
@@ -46,9 +37,7 @@
 
         <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
 
-        <!-- Используем класс service-grid вместо жестких стилей -->
         <div class="service-grid">
-            <!-- Левая колонка: Описание -->
             <div>
                 <h3>{% trans "Description" %}</h3>
                 <div style="line-height: 1.8; color: #444;">
@@ -56,51 +45,62 @@
                 </div>
             </div>
             
-            <!-- Правая колонка: Выбор и Документы -->
             <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; height: fit-content;">
                 
-                <!-- Выбор вариации услуги -->
-                <div style="margin-bottom: 25px;">
-                    <label for="service-variant" style="margin-bottom: 10px;">{% trans "Choose Option:" %}</label>
-                    <select id="service-variant" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
-                        <!-- Базовая опция -->
-                        <option value="{{ service.price }}" selected>
-                            {{ service.name }} - €{{ service.price|intcomma }}
-                        </option>
-                        
-                        <!-- Дополнительные вариации -->
-                        {% for variant in service.variants.all %}
-                            <option value="{{ variant.price }}">
-                                {{ variant.name }} - €{{ variant.price|intcomma }}
+                <!-- ФОРМА ДОБАВЛЕНИЯ В КОРЗИНУ -->
+                <form action="{% url 'add_to_cart' service.slug %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div style="margin-bottom: 25px;">
+                        <label for="service-variant" style="margin-bottom: 10px;">{% trans "Choose Option:" %}</label>
+                        <select name="variant" id="service-variant" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                            <!-- Базовая опция: value пустой, data-price для JS -->
+                            <option value="" data-price="{{ service.price }}" selected>
+                                {{ service.name }}
                             </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                            
+                            <!-- Вариации: value=ID, data-price для JS -->
+                            {% for variant in service.variants.all %}
+                                <option value="{{ variant.id }}" data-price="{{ variant.price }}">
+                                    {{ variant.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                <h4 style="margin-top: 0; color: var(--primary);">
-                    <i class="fa-solid fa-file-circle-check"></i> {% trans "Required Documents" %}
-                </h4>
-                <div style="font-size: 0.9rem; color: #555; line-height: 1.6;">
-                    {{ service.documents_required|linebreaks }}
-                </div>
+                    <h4 style="margin-top: 0; color: var(--primary);">
+                        <i class="fa-solid fa-file-circle-check"></i> {% trans "Required Documents" %}
+                    </h4>
+                    <div style="font-size: 0.9rem; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                        {{ service.documents_required|linebreaks }}
+                    </div>
 
-                <button class="btn" style="margin-top: 20px; width: 100%; background-color: #e0e0e0; cursor: not-allowed;" disabled>
-                    <i class="fa-solid fa-cart-plus"></i> {% trans "Add to Cart" %} (Coming Soon)
-                </button>
+                    {% if user.is_authenticated %}
+                        <button type="submit" class="btn" style="width: 100%;">
+                            <i class="fa-solid fa-cart-plus"></i> {% trans "Add to Cart" %}
+                        </button>
+                    {% else %}
+                        <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn" style="width: 100%; background-color: #95a5a6;">
+                            <i class="fa-solid fa-lock"></i> {% trans "Login to Order" %}
+                        </a>
+                    {% endif %}
+                </form>
+
             </div>
         </div>
     </div>
 </div>
 
-<!-- Скрипт для обновления цены -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const variantSelect = document.getElementById('service-variant');
         const priceDisplay = document.getElementById('price-display');
 
         variantSelect.addEventListener('change', function() {
-            const price = parseFloat(this.value).toFixed(2);
-            // Если используем запятые для десятичных (итальянский стандарт)
+            // Берем цену из атрибута data-price
+            const selectedOption = this.options[this.selectedIndex];
+            const price = parseFloat(selectedOption.getAttribute('data-price')).toFixed(2);
+            
             const formattedPrice = price.replace('.', ','); 
             priceDisplay.textContent = formattedPrice;
         });
