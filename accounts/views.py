@@ -7,11 +7,6 @@ from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, ProfileConfirmationForm
 from .models import User
 
-class SignUpView(CreateView):
-    form_class = SignUpForm
-    success_url = reverse_lazy('login')
-    template_name = 'registration/signup.html'
-
 class StaffUserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = User
     template_name = 'accounts/staff_user_detail.html'

@@ -1,0 +1,31 @@
+{% extends 'account_base.html' %}
+{% load i18n %}
+
+{% block account_content %}
+<div class="card" style="max-width: 600px; margin: auto;">
+    <h2 style="margin-top: 0;">{% trans "Upload Documents" %}</h2>
+    <p style="color: #666;">
+        {% trans "Ticket:" %} <strong>#{{ ticket.ticket_number }}</strong><br>
+        {% trans "Service:" %} {{ ticket.service_name }}
+    </p>
+    
+    <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #b6e0fe; color: #0c5460;">
+        <i class="fa-solid fa-info-circle"></i> 
+        {% trans "Please upload all required documents in a single file (PDF or ZIP archive)." %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="margin-bottom: 20px;">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> {% trans "Submit Documents" %}
+        </button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="{% url 'client_dashboard' %}" style="color: #777;">{% trans "Cancel" %}</a>
+    </div>
+</div>
+{% endblock %}

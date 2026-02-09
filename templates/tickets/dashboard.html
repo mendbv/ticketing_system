@@ -3,45 +3,72 @@
 
 {% block account_content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <h2 style="margin: 0;">{% trans "My Requests" %}</h2>
-    <a href="{% url 'create_ticket' %}" class="btn" style="width: auto;">
-        <i class="fa-solid fa-plus"></i> {% trans "New Request" %}
+    <h2 style="margin: 0;">{% trans "My Services" %}</h2>
+    <a href="{% url 'service_list' %}" class="btn" style="width: auto;">
+        <i class="fa-solid fa-cart-plus"></i> {% trans "Order New Service" %}
     </a>
 </div>
 
 {% if tickets %}
-<div class="card-grid">
+<div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
     {% for ticket in tickets %}
-    <div class="card">
-        <div class="status-strip st-{{ ticket.status }}"></div>
+    <div class="card" style="border-top: 5px solid 
+        {% if ticket.status == 'paid' %}#e67e22
+        {% elif ticket.status == 'pending' %}#f1c40f
+        {% elif ticket.status == 'ready' %}#27ae60
+        {% else %}#3498db{% endif %};">
         
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-            <span style="color: #999; font-size: 0.9rem;">#{{ ticket.ticket_number }}</span>
-            <span class="badge bg-{{ ticket.status }}">{{ ticket.get_status_display }}</span>
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+            <span style="color: #999; font-size: 0.85rem;">#{{ ticket.ticket_number }}</span>
+            <span class="badge" style="
+                {% if ticket.status == 'paid' %}background: #e67e22;
+                {% elif ticket.status == 'pending' %}background: #f1c40f; color: black;
+                {% elif ticket.status == 'ready' %}background: #27ae60;
+                {% elif ticket.status == 'rejected' %}background: #e74c3c;
+                {% else %}background: #3498db;{% endif %}">
+                {{ ticket.get_status_display }}
+            </span>
         </div>
         
-        <h3 style="margin: 15px 0;">{{ ticket.user_note|truncatechars:50 }}</h3>
+        <h3 style="margin: 0 0 5px 0; font-size: 1.1rem;">{{ ticket.service_name }}</h3>
+        {% if ticket.variant_name %}
+            <div style="color: var(--accent); font-size: 0.9rem; margin-bottom: 15px;">
+                {{ ticket.variant_name }}
+            </div>
+        {% endif %}
         
-        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-            {% if ticket.document %}
-                <a href="{{ ticket.document.url }}" class="btn btn-small" style="background: var(--status-ready); justify-content: center;">
-                    <i class="fa-solid fa-download"></i> {% trans "Download Document" %}
+        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid #eee;">
+            <!-- Если статус PAID - нужна загрузка документов -->
+            {% if ticket.status == 'paid' %}
+                <div style="background: #fff3cd; color: #856404; padding: 10px; font-size: 0.85rem; border-radius: 5px; margin-bottom: 10px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> {% trans "Action required: Upload documents" %}
+                </div>
+                <a href="{% url 'client_upload_docs' ticket.pk %}" class="btn" style="width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-upload"></i> {% trans "Upload Documents" %}
                 </a>
-            {% endif %}
+
+            <!-- Если статус READY - скачиваем результат -->
+            {% elif ticket.status == 'ready' and ticket.result_document %}
+                <a href="{{ ticket.result_document.url }}" class="btn" style="background: #27ae60; width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-download"></i> {% trans "Download Result" %}
+                </a>
             
-            {% if ticket.invoice %}
-                <a href="{{ ticket.invoice.url }}" class="btn btn-small" style="background: var(--primary); justify-content: center;">
-                    <i class="fa-solid fa-file-invoice-dollar"></i> {% trans "Download Invoice" %}
-                </a>
+            {% else %}
+                <div style="color: #777; font-size: 0.9rem; text-align: center;">
+                    {% trans "In progress..." %}
+                </div>
             {% endif %}
         </div>
     </div>
     {% endfor %}
 </div>
 {% else %}
-    <div style="text-align: center; padding: 50px; color: #999;">
+    <div class="card" style="text-align: center; padding: 50px; color: #999;">
         <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 20px;"></i>
-        <p>{% trans "You have no requests yet." %}</p>
+        <p>{% trans "You have no orders yet." %}</p>
+        <a href="{% url 'service_list' %}" class="btn" style="width: auto; margin-top: 10px;">
+            {% trans "Browse Services" %}
+        </a>
     </div>
 {% endif %}
 {% endblock %}

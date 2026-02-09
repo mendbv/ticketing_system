@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOCUITALY</title>
+    <title>TESEO CAF - Standard</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,13 @@
 
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --bg-light: #f4f6f9;
-            --text-dark: #2d3436;
+            /* Новая палитра под логотип TESEO CAF */
+            --primary: #58687e; /* Серо-синий */
+            --accent: #7ca0c8;  /* Светло-синий акцент */
+            --bg-light: #f8f9fa;
+            --text-dark: #4a4a4a; 
             --white: #ffffff;
+            
             --status-pending: #f1c40f;
             --status-ready: #27ae60;
             --status-rejected: #e74c3c;
@@ -30,7 +32,6 @@
 
         html {
             height: 100%;
-            /* Делаем фон html таким же как у body, чтобы при "отскоке" скролла не было белого */
             background-color: var(--bg-light); 
         }
 
@@ -41,43 +42,44 @@
             color: var(--text-dark);
             display: flex;
             flex-direction: column;
-            /* Используем dvh (dynamic viewport height) для корректной работы на мобильных */
             min-height: 100dvh; 
         }
 
-        /* === ИСПРАВЛЕНИЕ ТЕКСТА === */
         p, h1, h2, h3, h4, h5, h6, span, div, li {
-            /* Заставляет длинные слова переноситься */
             overflow-wrap: break-word;
             word-wrap: break-word;
             word-break: break-word;
-            /* Добавляет переносы (дефисы), если браузер поддерживает */
             hyphens: auto; 
         }
 
         /* ================= NAVIGATION ================= */
 
         nav {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 5%;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 10px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.04);
             position: sticky;
             top: 0;
             z-index: 1000;
             backdrop-filter: blur(10px);
+            border-bottom: 1px solid #eee;
+            min-height: 80px; /* Минимальная высота навигации */
         }
 
         .logo {
-            font-weight: 800;
-            font-size: 24px;
             text-decoration: none;
-            color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 10px;
+        }
+
+        .logo img {
+            height: 80px; /* БЫЛО 50px -> СТАЛО 80px */
+            width: auto;
+            object-fit: contain;
+            max-width: 250px; /* На всякий случай ограничим ширину */
         }
 
         .nav-links {
@@ -89,11 +91,11 @@
         .nav-links a {
             text-decoration: none;
             color: var(--text-dark);
-            font-weight: 500;
+            font-weight: 600;
             font-size: 15px;
             transition: color 0.3s;
         }
-        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover { color: var(--primary); }
 
         .logout-btn {
             background: none;
@@ -118,7 +120,7 @@
             color: var(--white) !important;
             padding: 12px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
@@ -127,13 +129,14 @@
             gap: 8px;
             font-size: 14px;
             font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
             width: 100%;            
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(88, 104, 126, 0.2);
+            background: #465466;
         }
 
         .btn-secondary {
@@ -156,7 +159,7 @@
             margin-bottom: 20px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            background: #fdfdfd;
+            background: #fff;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             transition: all 0.3s ease;
@@ -166,7 +169,7 @@
             border-color: var(--accent);
             background: white;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            box-shadow: 0 0 0 3px rgba(124, 160, 200, 0.15);
         }
 
         label {
@@ -204,13 +207,13 @@
             background: var(--white);
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             position: relative;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
             display: flex;
             flex-direction: column;
             height: 100%;
-            overflow: hidden; /* Чтобы контент не вылезал за скругления */
+            overflow: hidden; 
         }
         
         .card > :last-child:not(.status-strip) {
@@ -253,105 +256,27 @@
         @media (max-width: 768px) {
             nav { flex-direction: column; gap: 15px; }
             .nav-links { flex-wrap: wrap; justify-content: center; }
-            
-            /* Уменьшаем отступы на мобильных для контейнера */
             .container { padding: 30px 15px; }
-            
-            /* Уменьшаем размер шрифта заголовков, чтобы не разрывали экран */
             h1 { font-size: 1.8rem; }
-            
             .card { padding: 20px; }
+            /* Адаптация логотипа для мобильных, чтобы не был слишком огромным */
+            .logo img { height: 60px; }
         }
     </style>
 </head>
-
-{% if user.is_authenticated and cart_count > 0 %}
-    <a href="{% url 'view_cart' %}" class="floating-cart-btn">
-        <div class="cart-icon-container">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="cart-counter">{{ cart_count }}</span>
-        </div>
-        <span class="cart-label">{% trans "Checkout" %}</span>
-    </a>
-
-    <style>
-        .floating-cart-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--accent); /* Цвет акцента из настроек */
-            color: white;
-            padding: 15px 20px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: bold;
-            z-index: 9999;
-            transition: transform 0.2s, box-shadow 0.2s;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .floating-cart-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
-        }
-
-        .cart-icon-container {
-            position: relative;
-        }
-
-        .cart-counter {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #e74c3c;
-            color: white;
-            font-size: 10px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--accent);
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        /* На мобильных делаем кнопку компактнее */
-        @media (max-width: 768px) {
-            .floating-cart-btn {
-                padding: 15px;
-                border-radius: 50%;
-                bottom: 20px;
-                right: 20px;
-            }
-            .cart-label {
-                display: none; /* Прячем текст, оставляем иконку */
-            }
-        }
-    </style>
-{% endif %}
 
 <body>
 
 <nav>
     <a href="{% url 'home' %}" class="logo">
-        <i class="fa-solid fa-passport"></i> DOCUITALY
+        <img src="{% static 'img/logo.png' %}" alt="TESEO CAF">
     </a>
     
     <div class="nav-links">
-        <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> {% trans "Home" %}</a>
         <a href="{% url 'service_list' %}"><i class="fa-solid fa-layer-group"></i> {% trans "Services" %}</a>
+        <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> {% trans "Home" %}</a>
         
         {% if user.is_authenticated %}
-            <!-- Единая ссылка на Личный Кабинет -->
             <a href="{% url 'client_dashboard' %}" class="btn btn-small" style="background: var(--bg-light); color: var(--primary) !important; border: 1px solid #ddd;">
                 <i class="fa-solid fa-user"></i> {% trans "My Account" %}
             </a>
@@ -361,7 +286,6 @@
                     <i class="fa-solid fa-user-shield"></i> Staff
                 </a>
             {% endif %}
-            
         {% else %}
             <a href="{% url 'account_login' %}" class="btn btn-small"><i class="fa-solid fa-right-to-bracket"></i> {% trans "Login" %}</a>
         {% endif %}
@@ -387,8 +311,8 @@
 <footer>
     <div class="footer-content">
         <div>
-            <h3 style="margin-top: 0;">DOCUITALY</h3>
-            <p>{% trans "Professional assistance with documents." %}</p>
+            <h3 style="margin-top: 0;">TESEO CAF</h3>
+            <p>{% trans "Professional fiscal assistance services." %}</p>
         </div>
         <div>
             {% if contacts %}
@@ -398,6 +322,71 @@
         </div>
     </div>
 </footer>
+
+<!-- FLOATING CART BUTTON -->
+{% if user.is_authenticated and cart_count > 0 %}
+    <a href="{% url 'view_cart' %}" class="floating-cart-btn">
+        <div class="cart-icon-container">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-counter">{{ cart_count }}</span>
+        </div>
+        <span class="cart-label">{% trans "Checkout" %}</span>
+    </a>
+
+    <style>
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(124, 160, 200, 0.4);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            z-index: 9999;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .floating-cart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(124, 160, 200, 0.6);
+        }
+
+        .cart-icon-container { position: relative; }
+
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--accent);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .floating-cart-btn { padding: 15px; border-radius: 50%; bottom: 20px; right: 20px; }
+            .cart-label { display: none; }
+        }
+    </style>
+{% endif %}
 
 </body>
 </html>

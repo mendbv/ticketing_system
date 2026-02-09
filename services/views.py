@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from .models import Category, Service, Cart, CartItem, ServiceVariant
+import stripe
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponse
 
 class ServiceListView(ListView):
     model = Category
@@ -53,3 +57,60 @@ def remove_from_cart(request, item_id):
     item.delete()
     messages.info(request, _("Item removed from cart."))
     return redirect('view_cart')
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@login_required
+def create_checkout_session(request):
+    """
+    Создает сессию оплаты в Stripe на основе корзины пользователя.
+    """
+    cart = Cart.objects.filter(user=request.user).first()
+    if not cart or not cart.items.exists():
+        return redirect('view_cart')
+
+    line_items = []
+    for item in cart.items.all():
+        # Формируем название (с вариацией или без)
+        product_name = item.service.name
+        if item.variant:
+            product_name += f" ({item.variant.name})"
+
+        # Stripe принимает цену в копейках/центах (целое число)
+        # Наша цена 10.50 евро -> 1050 центов
+        price_cents = int(item.get_price() * 100)
+
+        line_items.append({
+            'price_data': {
+                'currency': 'eur',
+                'product_data': {
+                    'name': product_name,
+                },
+                'unit_amount': price_cents,
+            },
+            'quantity': 1,
+        })
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'], # Можно добавить 'paypal', если настроен в Stripe
+            line_items=line_items,
+            mode='payment',
+            success_url=request.build_absolute_uri('/services/payment/success/'),
+            cancel_url=request.build_absolute_uri('/services/payment/cancel/'),
+            metadata={
+                'user_id': request.user.id
+            }
+        )
+        return redirect(checkout_session.url, code=303)
+    except Exception as e:
+        messages.error(request, f"Error connecting to Stripe: {str(e)}")
+        return redirect('view_cart')
+
+@login_required
+def payment_success(request):
+    return render(request, 'services/payment_success.html')
+
+@login_required
+def payment_cancel(request):
+    return render(request, 'services/payment_cancel.html')

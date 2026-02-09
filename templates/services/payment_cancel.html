@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="card" style="text-align: center; max-width: 600px; margin: 50px auto; padding: 40px;">
+    <i class="fa-solid fa-circle-xmark" style="font-size: 5rem; color: #e74c3c; margin-bottom: 20px;"></i>
+    <h1>{% trans "Payment Cancelled" %}</h1>
+    <p>{% trans "You have cancelled the checkout process. Nothing was charged." %}</p>
+    <a href="{% url 'view_cart' %}" class="btn" style="margin-top: 20px;">
+        {% trans "Return to Cart" %}
+    </a>
+</div>
+{% endblock %}

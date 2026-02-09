@@ -40,9 +40,12 @@
             </a>
             
             <!-- Кнопка оплаты (пока просто заглушка, Stripe будет на следующем шаге) -->
-            <button class="btn" style="width: auto; background: #27ae60;">
-                {% trans "Proceed to Checkout" %} <i class="fa-solid fa-credit-card"></i>
-            </button>
+            <form action="{% url 'create_checkout_session' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn" style="width: auto; background: #27ae60;">
+                    {% trans "Proceed to Checkout" %} <i class="fa-solid fa-credit-card"></i>
+                </button>
+            </form>
         </div>
 
     {% else %}
