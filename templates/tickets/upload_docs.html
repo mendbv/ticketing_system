@@ -11,16 +11,29 @@
     
     <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #b6e0fe; color: #0c5460;">
         <i class="fa-solid fa-info-circle"></i> 
-        {% trans "Please upload all required documents in a single file (PDF or ZIP archive)." %}
+        {% trans "You can upload multiple files (PDF, JPG, PNG)." %}
     </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
         {% csrf_token %}
-        <div style="margin-bottom: 20px;">
-            {{ form.as_p }}
+        
+        <div style="border: 2px dashed #ccc; padding: 40px; text-align: center; border-radius: 10px; cursor: pointer; transition: 0.2s;" 
+             onclick="document.getElementById('fileInput').click()" 
+             onmouseover="this.style.borderColor='#3498db'; this.style.backgroundColor='#f9f9f9'"
+             onmouseout="this.style.borderColor='#ccc'; this.style.backgroundColor='white'">
+            
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; color: #3498db; margin-bottom: 15px;"></i>
+            <p style="margin: 0; font-weight: bold;">{% trans "Click to select files" %}</p>
+            <p style="color: #999; font-size: 0.9rem;">{% trans "or drag and drop here" %}</p>
+            
+            <!-- СКРЫТЫЙ INPUT С MULTIPLE -->
+            <input type="file" name="files" id="fileInput" multiple style="display: none;" onchange="updateFileList()">
         </div>
-        <button type="submit" class="btn" style="width: 100%;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> {% trans "Submit Documents" %}
+
+        <div id="fileList" style="margin-top: 20px; text-align: left;"></div>
+
+        <button type="submit" class="btn" style="width: 100%; margin-top: 20px;" id="submitBtn" disabled>
+            <i class="fa-solid fa-check"></i> {% trans "Submit Documents" %}
         </button>
     </form>
     
@@ -28,4 +41,32 @@
         <a href="{% url 'client_dashboard' %}" style="color: #777;">{% trans "Cancel" %}</a>
     </div>
 </div>
+
+<script>
+    function updateFileList() {
+        const input = document.getElementById('fileInput');
+        const list = document.getElementById('fileList');
+        const btn = document.getElementById('submitBtn');
+        
+        list.innerHTML = '';
+        
+        if (input.files.length > 0) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+                const item = document.createElement('div');
+                item.style.padding = '8px';
+                item.style.borderBottom = '1px solid #eee';
+                item.style.fontSize = '0.9rem';
+                item.innerHTML = `<i class="fa-solid fa-file"></i> ${file.name} <span style="color:#999">(${(file.size/1024).toFixed(1)} KB)</span>`;
+                list.appendChild(item);
+            }
+        } else {
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+</script>
 {% endblock %}
