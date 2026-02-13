@@ -17,10 +17,6 @@ class StaffUserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 @login_required
 def profile_confirmation(request):
-    """
-    Страница, куда попадает юзер после входа.
-    Позволяет проверить данные и сохранить их.
-    """
     if request.method == 'POST':
         form = ProfileConfirmationForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():

@@ -20,13 +20,11 @@ class Ticket(models.Model):
     variant_name = models.CharField(_("Option"), max_length=255, blank=True, null=True)
     price_paid = models.DecimalField(_("Price Paid"), max_digits=10, decimal_places=2, default=0.00)
     
-    user_note = models.TextField(_("Description"), blank=True) # Что купил
-    staff_internal_note = models.TextField(_("Staff Note"), blank=True) # Заметки сотрудника
+    user_note = models.TextField(_("Description"), blank=True)
+    staff_internal_note = models.TextField(_("Staff Note"), blank=True)
     
-    # Старое поле (можно оставить как архив)
     document_bundle = models.FileField(_("Legacy Bundle"), upload_to='client_docs/', blank=True, null=True)
     
-    # Результат работы (файл, который отдаем клиенту)
     result_document = models.FileField(_("Result Document"), upload_to='results/', blank=True, null=True)
     
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='paid')
@@ -41,7 +39,6 @@ class Ticket(models.Model):
     def __str__(self):
         return f"#{self.ticket_number} - {self.service_name}"
 
-# НОВАЯ МОДЕЛЬ ДЛЯ ФАЙЛОВ
 class TicketFile(models.Model):
     ticket = models.ForeignKey(Ticket, related_name='files', on_delete=models.CASCADE)
     file = models.FileField(upload_to='ticket_files/%Y/%m/')

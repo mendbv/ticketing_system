@@ -7,8 +7,6 @@ from django.core.mail import send_mail
 from .models import Ticket, TicketFile
 from django import forms
 
-# === CLIENT VIEWS ===
-
 @login_required
 def client_dashboard(request):
     if not request.user.phone:
@@ -22,14 +20,12 @@ def client_upload_docs(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk, client=request.user)
     
     if request.method == 'POST':
-        # Получаем список файлов из input name="files"
         files = request.FILES.getlist('files')
         
         if files:
             for f in files:
                 TicketFile.objects.create(ticket=ticket, file=f)
             
-            # Меняем статус
             if ticket.status == 'paid':
                 ticket.status = 'pending'
                 ticket.save()
@@ -41,24 +37,19 @@ def client_upload_docs(request, pk):
 
     return render(request, 'tickets/upload_docs.html', {'ticket': ticket})
 
-# === STAFF VIEWS (REFACTORED) ===
-
 @login_required
 def staff_dashboard(request):
     if not request.user.is_staff:
         return redirect('client_dashboard')
 
-    # Получаем параметр фильтрации из URL (по умолчанию 'all')
     status_filter = request.GET.get('status', 'all')
     query = request.GET.get('q', '')
 
     tickets = Ticket.objects.all().order_by('-created_at')
 
-    # Фильтрация
     if status_filter != 'all':
         tickets = tickets.filter(status=status_filter)
     
-    # Поиск
     if query:
         tickets = tickets.filter(
             Q(ticket_number__icontains=query) |
@@ -67,9 +58,7 @@ def staff_dashboard(request):
             Q(client__last_name__icontains=query)
         )
 
-    # Считаем количество для табов
     counts = Ticket.objects.values('status').annotate(total=Count('status'))
-    # Преобразуем в словарь { 'paid': 5, 'pending': 2 ... }
     stats = {item['status']: item['total'] for item in counts}
     
     total_count = Ticket.objects.count()
@@ -81,7 +70,7 @@ def staff_dashboard(request):
         'current_status': status_filter,
         'search_query': query
     }
-    return render(request, 'tickets/staff_dashboard_v2.html', context)
+    return render(request, 'tickets/staff_dashboard.html', context)
 
 @login_required
 def edit_ticket(request, pk):
@@ -91,7 +80,6 @@ def edit_ticket(request, pk):
     ticket = get_object_or_404(Ticket, pk=pk)
     
     if request.method == 'POST':
-        # Обновление статуса и заметок
         new_status = request.POST.get('status')
         internal_note = request.POST.get('staff_internal_note')
         result_file = request.FILES.get('result_document')
@@ -105,7 +93,7 @@ def edit_ticket(request, pk):
         if result_file:
             ticket.result_document = result_file
             if new_status == 'processing':
-                ticket.status = 'ready' # Автоматически ставим Ready если загрузили результат
+                ticket.status = 'ready'
 
         ticket.save()
         messages.success(request, "Ticket updated.")
@@ -120,7 +108,6 @@ def quick_move_to_processing(request, pk):
         return redirect('client_dashboard')
     
     ticket = get_object_or_404(Ticket, pk=pk)
-    # Если статус paid или pending -> переводим в processing
     if ticket.status in ['paid', 'pending']:
         ticket.status = 'processing'
         ticket.save()

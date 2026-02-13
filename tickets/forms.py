@@ -4,7 +4,7 @@ from .models import Ticket
 class ClientUploadForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['document_bundle'] # Новое поле
+        fields = ['document_bundle']
         widgets = {
             'document_bundle': forms.FileInput(attrs={'class': 'file-input'}),
         }

@@ -1,26 +1,18 @@
 import os
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
-import environ # Импорт библиотеки
+import environ
 
-# 1. Настройка environ (В САМОМ НАЧАЛЕ)
 env = environ.Env(
-    # Указываем типы данных по умолчанию
     DEBUG=(bool, False)
 )
 
-# Определяем корневую папку
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 2. Читаем файл .env из корня проекта
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# --- НАЧАЛО НАСТРОЕК ---
-
-# Теперь берем секреты из .env
 SECRET_KEY = env('SECRET_KEY')
 
-# DEBUG теперь берется из .env (True/False)
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
@@ -35,7 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sites', 
 
-    # Allauth apps
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -134,7 +125,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'TESEO CAF System <system@teseocaf.com>'
 
-# Allauth settings
 SITE_ID = 1
 
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -150,7 +140,7 @@ SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 LOGIN_URL = 'account_login'
-LOGIN_REDIRECT_URL = 'client_dashboard' # Идем в дашборд (там есть проверка профиля)
+LOGIN_REDIRECT_URL = 'client_dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -160,7 +150,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# Stripe Settings (читаем из .env)
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
