@@ -153,3 +153,56 @@ SOCIALACCOUNT_PROVIDERS = {
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
+
+# === STATIC & MEDIA FILES ===
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Используем WhiteNoise для эффективной раздачи статики (CSS, JS, Fonts)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Проверяем переменную окружения (для продакшена на DigitalOcean)
+USE_SPACES = env.bool('USE_SPACES', default=False)
+
+if USE_SPACES:
+    # --- PROD: DigitalOcean Spaces / AWS S3 ---
+    # Эти ключи должны быть в Environment Variables на сервере
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = env('AWS_S3_ENDPOINT_URL') # Например: https://fra1.digitaloceanspaces.com
+    
+    # Настройки кеширования для браузеров (чтобы картинки не грузились каждый раз)
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    
+    AWS_LOCATION = 'media'
+    
+    # Формируем публичный URL для файлов
+    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/'
+    
+    # Говорим Django использовать S3 для хранения файлов
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    # --- LOCAL: Обычное сохранение в папку media ---
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }

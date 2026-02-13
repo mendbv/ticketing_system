@@ -44,14 +44,14 @@
 
     /* === ИСПРАВЛЕНИЯ ДЛЯ БЕЙДЖЕЙ И КНОПОК === */
     .badge {
-        white-space: nowrap; /* Запрещаем перенос слов */
-        display: inline-block; /* Чтобы padding работал корректно */
+        white-space: nowrap; 
+        display: inline-block; 
         line-height: 1.2;
     }
     
     .btn {
-        white-space: nowrap; /* Запрещаем разрыв кнопки "Proce ss" */
-        word-break: normal;  /* Отменяем глобальный перенос */
+        white-space: nowrap; 
+        word-break: normal;
     }
 
     /* === МОБИЛЬНАЯ АДАПТАЦИЯ === */
@@ -100,16 +100,16 @@
             border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border: 1px solid #eee;
-            padding: 15px; /* Чуть больше отступа внутри карточки */
+            padding: 15px;
         }
 
         .ticket-table td {
-            padding: 10px 0; /* Отступы между строками внутри карточки */
+            padding: 10px 0;
             border-bottom: 1px solid #f5f5f5;
             text-align: right;
             display: flex;
             justify-content: space-between;
-            align-items: center; /* Центрируем по вертикали */
+            align-items: center;
         }
         
         .ticket-table td:last-child { border-bottom: none; }
@@ -121,8 +121,8 @@
             color: #999;
             text-transform: uppercase;
             text-align: left;
-            margin-right: 15px; /* Отступ от названия до значения */
-            flex-shrink: 0; /* Чтобы название не сжималось */
+            margin-right: 15px;
+            flex-shrink: 0;
         }
 
         .client-cell { flex-direction: row-reverse; }
@@ -134,14 +134,13 @@
     
     <!-- SIDEBAR FILTERS -->
     <div class="staff-sidebar">
-        <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--primary);">Tickets Filter</h3>
+        <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--primary);">{% trans "Tickets Filter" %}</h3>
         
         <a href="?status=all" class="filter-link {% if current_status == 'all' %}active{% endif %}">
             <span>{% trans "All" %}</span>
             <span class="filter-badge">{{ total_count }}</span>
         </a>
         
-        <!-- HR скрыт на мобильном через CSS -->
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
         
         <a href="?status=paid" class="filter-link {% if current_status == 'paid' %}active{% endif %}">
@@ -167,7 +166,7 @@
         <!-- Search -->
         <form method="get" style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="hidden" name="status" value="{{ current_status }}">
-            <input type="text" name="q" placeholder="Search..." value="{{ search_query }}" style="margin-bottom: 0; background: white; border-radius: 8px;">
+            <input type="text" name="q" placeholder="Search by #ID, Name, Email..." value="{{ search_query }}" style="margin-bottom: 0; background: white; border-radius: 8px;">
             <button type="submit" class="btn" style="width: auto; border-radius: 8px;"><i class="fa-solid fa-search"></i></button>
         </form>
 
@@ -175,42 +174,61 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Client</th>
-                    <th>Service</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Action</th>
+                    <th>{% trans "Client" %}</th>
+                    <th>{% trans "Service" %}</th>
+                    <th>{% trans "Assignee" %}</th> <!-- Новый столбец -->
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Action" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for ticket in tickets %}
-                <!-- data-label нужен для мобильной версии -->
                 <tr onclick="window.location='{% url 'edit_ticket' ticket.pk %}';">
                     <td data-label="ID"><strong>#{{ ticket.ticket_number }}</strong></td>
-                    <td data-label="Client">
+                    
+                    <td data-label="{% trans 'Client' %}">
                         <div class="client-cell">
                             {% if ticket.client.avatar %}
                                 <img src="{{ ticket.client.avatar.url }}" class="user-avatar-small" style="object-fit: cover;">
                             {% else %}
                                 <div class="user-avatar-small">{{ ticket.client.first_name|first|upper }}</div>
                             {% endif %}
-                            <div style="text-align: right;"> <!-- Текст справа на мобиле -->
+                            <div style="text-align: right;">
                                 <div style="font-weight: 600;">{{ ticket.client.get_full_name }}</div>
                                 <div style="font-size: 0.8rem; color: #888;">{{ ticket.client.email }}</div>
                             </div>
                         </div>
                     </td>
-                    <td data-label="Service">
+                    
+                    <td data-label="{% trans 'Service' %}">
                         <div style="display: inline-block; text-align: right;">
                             {{ ticket.service_name }}
                             {% if ticket.variant_name %}<div style="font-size: 0.8rem; color: #888;">{{ ticket.variant_name }}</div>{% endif %}
                         </div>
                     </td>
-                    <td data-label="Status">
+
+                    <!-- Новый столбец: Ответственный -->
+                    <td data-label="{% trans 'Assignee' %}">
+                        {% if ticket.assigned_to %}
+                            <div style="display: flex; align-items: center; gap: 5px; justify-content: flex-end;">
+                                <div class="user-avatar-small" style="width: 25px; height: 25px; font-size: 0.7rem; margin: 0; background: #95a5a6;">
+                                    {{ ticket.assigned_to.first_name|first|upper }}
+                                </div>
+                                <span style="font-size: 0.85rem;">{{ ticket.assigned_to.first_name }}</span>
+                            </div>
+                        {% else %}
+                            <span style="color: #ccc;">—</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td data-label="{% trans 'Status' %}">
                         <span class="badge bg-{{ ticket.status }}">{{ ticket.get_status_display }}</span>
                     </td>
-                    <td data-label="Date" style="color: #666; font-size: 0.9rem;">{{ ticket.created_at|date:"d M Y" }}</td>
-                    <td data-label="Action">
+                    
+                    <td data-label="{% trans 'Date' %}" style="color: #666; font-size: 0.9rem;">{{ ticket.created_at|date:"d M Y" }}</td>
+                    
+                    <td data-label="{% trans 'Action' %}">
                         <a href="{% url 'edit_ticket' ticket.pk %}" class="btn btn-small btn-secondary">
                             Process <i class="fa-solid fa-arrow-right"></i>
                         </a>
@@ -218,7 +236,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
                         No tickets found.
                     </td>
                 </tr>

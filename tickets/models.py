@@ -14,8 +14,17 @@ class Ticket(models.Model):
     ]
 
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tickets')
-    ticket_number = models.CharField(max_length=10, unique=True, blank=True)
+    # Новое поле: Ответственный сотрудник
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='assigned_tickets',
+        verbose_name=_("Assignee")
+    )
     
+    ticket_number = models.CharField(max_length=10, unique=True, blank=True)
     service_name = models.CharField(_("Service"), max_length=255, default="Unknown Service")
     variant_name = models.CharField(_("Option"), max_length=255, blank=True, null=True)
     price_paid = models.DecimalField(_("Price Paid"), max_digits=10, decimal_places=2, default=0.00)
@@ -24,12 +33,12 @@ class Ticket(models.Model):
     staff_internal_note = models.TextField(_("Staff Note"), blank=True)
     
     document_bundle = models.FileField(_("Legacy Bundle"), upload_to='client_docs/', blank=True, null=True)
-    
     result_document = models.FileField(_("Result Document"), upload_to='results/', blank=True, null=True)
     
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='paid')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    invoice = models.FileField(upload_to='invoices/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.ticket_number:
@@ -47,5 +56,12 @@ class TicketFile(models.Model):
     def filename(self):
         return os.path.basename(self.file.name)
 
+# НОВАЯ МОДЕЛЬ: Лог изменений
+class TicketLog(models.Model):
+    ticket = models.ForeignKey(Ticket, related_name='logs', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    action = models.CharField(max_length=255) # Например: "Changed status to Ready"
+    timestamp = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return f"File for {self.ticket.ticket_number}"
+        return f"{self.user} - {self.action}"

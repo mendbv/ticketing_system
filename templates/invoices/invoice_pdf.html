@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; padding: 20px; color: #333; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .logo { font-size: 24px; font-weight: bold; color: #58687e; }
+        .invoice-box { border: 1px solid #eee; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; background: #f8f9fa; padding: 10px; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+        .total { text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 20px; }
+        .paid { color: #27ae60; font-weight: bold; border: 2px solid #27ae60; padding: 5px 10px; display: inline-block; transform: rotate(-10deg); float: right; margin-top: -50px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">TESEO CAF</div>
+        <div>
+            <strong>Invoice #INV-{{ ticket.id }}</strong><br>
+            Date: {{ ticket.created_at|date:"d M Y" }}
+        </div>
+    </div>
+
+    <div class="invoice-box">
+        <div>
+            <strong>Bill To:</strong><br>
+            {{ ticket.client.get_full_name }}<br>
+            {{ ticket.client.email }}
+        </div>
+
+        <div class="paid">PAID</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ ticket.service_name }} {% if ticket.variant_name %}({{ ticket.variant_name }}){% endif %}</td>
+                    <td style="text-align: right;">€{{ ticket.price_paid }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="total">
+            Total: €{{ ticket.price_paid }}
+        </div>
+    </div>
+    
+    <div style="margin-top: 50px; font-size: 0.8rem; color: #777; text-align: center;">
+        TESEO CAF - Professional Fiscal Assistance<br>
+        Thank you for your business.
+    </div>
+</body>
+</html>

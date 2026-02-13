@@ -1,0 +1,27 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+    <h2 style="color: #58687e;">Status Update</h2>
+    <p>Hello {{ ticket.client.first_name }},</p>
+    
+    <p>The status of your ticket <strong>#{{ ticket.ticket_number }}</strong> ({{ ticket.service_name }}) has been updated.</p>
+    
+    <div style="background-color: #f8f9fa; padding: 15px; border-left: 5px solid #3498db; margin: 20px 0;">
+        <p style="margin: 0; color: #777; font-size: 0.85rem;">New Status:</p>
+        <p style="margin: 5px 0 0 0; font-size: 1.2rem; font-weight: bold; color: #333;">
+            {{ ticket.get_status_display }}
+        </p>
+    </div>
+
+    {% if ticket.status == 'ready' %}
+        <p><strong>Great news!</strong> Your documents are ready. You can download the result in your dashboard.</p>
+    {% elif ticket.status == 'pending' %}
+        <p>We have received your documents and are currently reviewing them.</p>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ dashboard_url }}" style="background-color: #58687e; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            Go to Dashboard
+        </a>
+    </div>
+{% endblock %}

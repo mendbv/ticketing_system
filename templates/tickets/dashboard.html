@@ -37,25 +37,37 @@
             </div>
         {% endif %}
         
-        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid #eee;">
-            <!-- Если статус PAID - нужна загрузка документов -->
+        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 10px;">
+            
+            <!-- Кнопка Инвойса (Появляется, если PDF сгенерирован) -->
+            {% if ticket.invoice %}
+                <a href="{{ ticket.invoice.url }}" target="_blank" class="btn btn-small" style="background: var(--primary); justify-content: center;">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> {% trans "Download Invoice" %}
+                </a>
+            {% endif %}
+
+            <!-- Действия в зависимости от статуса -->
             {% if ticket.status == 'paid' %}
-                <div style="background: #fff3cd; color: #856404; padding: 10px; font-size: 0.85rem; border-radius: 5px; margin-bottom: 10px;">
+                <div style="background: #fff3cd; color: #856404; padding: 10px; font-size: 0.85rem; border-radius: 5px;">
                     <i class="fa-solid fa-triangle-exclamation"></i> {% trans "Action required: Upload documents" %}
                 </div>
                 <a href="{% url 'client_upload_docs' ticket.pk %}" class="btn" style="width: 100%; justify-content: center;">
                     <i class="fa-solid fa-upload"></i> {% trans "Upload Documents" %}
                 </a>
 
-            <!-- Если статус READY - скачиваем результат -->
             {% elif ticket.status == 'ready' and ticket.result_document %}
-                <a href="{{ ticket.result_document.url }}" class="btn" style="background: #27ae60; width: 100%; justify-content: center;">
+                <a href="{{ ticket.result_document.url }}" target="_blank" class="btn" style="background: #27ae60; width: 100%; justify-content: center;">
                     <i class="fa-solid fa-download"></i> {% trans "Download Result" %}
                 </a>
             
+            {% elif ticket.status == 'rejected' %}
+                 <div style="color: #e74c3c; font-size: 0.9rem; text-align: center;">
+                    {% trans "Request Rejected. Contact support." %}
+                </div>
+
             {% else %}
                 <div style="color: #777; font-size: 0.9rem; text-align: center;">
-                    {% trans "In progress..." %}
+                    <i class="fa-solid fa-spinner fa-spin"></i> {% trans "In progress..." %}
                 </div>
             {% endif %}
         </div>

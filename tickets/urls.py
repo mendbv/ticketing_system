@@ -7,5 +7,6 @@ urlpatterns = [
 
     path('staff/', views.staff_dashboard, name='staff_dashboard'),
     path('edit/<int:pk>/', views.edit_ticket, name='edit_ticket'),
-    path('staff/quick-process/<int:pk>/', views.quick_move_to_processing, name='quick_move_to_processing'),
+    
+    path('staff/assign/<int:pk>/', views.staff_assign_ticket, name='staff_assign_ticket'),
 ]
